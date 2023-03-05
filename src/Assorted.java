@@ -342,37 +342,63 @@ public class Assorted {
      *              wildWest(["NORTH", "EAST", "WEST", "SOUTH", "WEST", "WEST"]) returns
      *              ["WEST", "WEST"]
      */
+
+    /**I WOULD LIKE TO STRONGLY PROTEST THAT IN AssortedTest result3, IT DOESN'T MAKE SENSE
+    AFTER CANCELLING OUT EVERYTHING, IT SHOULD BE NORTH NORTH WEST
+    I DON'T UNDERSTAND WHY WOULD YOU ONLY CANCEL OUT THE ADJACENT DIRECTIONS
+    SHOULD CANCEL OUT ALL NEEDLESS DIRECTIONS, NOT JUST THE ADJACENT ONES
+    IF YOU GO NORTH EAST EAST SOUTH, YOU END UP EAST EAST, NORTH AND SOUTH SHOULD'VE GOTTEN CANCELLED*/
+    private static boolean hasNeedlessDirections(List<String> directions){
+        for (int i = 0; i < directions.size() - 1; i++){
+            if(directions.get(i).equals("NORTH") && directions.get(i+1).equals("SOUTH")){
+                return true;
+            }
+            else if (directions.get(i).equals("SOUTH") && directions.get(i+1).equals("NORTH")){
+                return true;
+            }
+            else if (directions.get(i).equals("EAST") && directions.get(i+1).equals("WEST")){
+                return true;
+            }
+            else if (directions.get(i).equals("WEST") && directions.get(i+1).equals("EAST")){
+                return true;
+            }
+        }
+        return false;
+    }
     public static List<String> wildWest(List<String> directions) {
-        int N_occurrence = Collections.frequency(directions, "NORTH");
-        int S_occurrence = Collections.frequency(directions, "SOUTH");
-        int E_occurrence = Collections.frequency(directions, "EAST");
-        int W_occurrence = Collections.frequency(directions, "WEST");
+        //repeat all of this while it still has needless directions
+        do{
+            //finds the indices of pairs that need to be excluded from returned list
+            List<Integer> indicesToCancel = new ArrayList<>();
+            for (int i = 0; i < directions.size() - 1; i++){
+                if(directions.get(i).equals("NORTH") && directions.get(i+1).equals("SOUTH")){
+                    indicesToCancel.add(i);
+                    indicesToCancel.add(i+1);
+                }
+                else if (directions.get(i).equals("SOUTH") && directions.get(i+1).equals("NORTH")){
+                    indicesToCancel.add(i);
+                    indicesToCancel.add(i+1);
+                }
+                else if (directions.get(i).equals("EAST") && directions.get(i+1).equals("WEST")){
+                    indicesToCancel.add(i);
+                    indicesToCancel.add(i+1);
+                }
+                else if (directions.get(i).equals("WEST") && directions.get(i+1).equals("EAST")){
+                    indicesToCancel.add(i);
+                    indicesToCancel.add(i+1);
+                }
+            }
+            //iterate through all indices in direction
+            //add elements to return list whose indices ARE NOT in indicesToCancel
+            List<String> newList = new ArrayList<>();
+            for (int i = 0; i < directions.size(); i++){
+                if (!indicesToCancel.contains(i)){
+                    newList.add(directions.get(i));
+                }
+            }
+            directions = newList;
+        }while(hasNeedlessDirections(directions));
 
-        if (N_occurrence > S_occurrence){
-            for (int i = 1; i <= S_occurrence; i++){
-                directions.remove("NORTH");
-                directions.remove("SOUTH");
-            }
-        }
-        else{
-            for (int i = 1; i <= N_occurrence; i++){
-                directions.remove("NORTH");
-                directions.remove("SOUTH");
-            }
-        }
-
-        if (W_occurrence > E_occurrence){
-            for (int i = 1; i <= E_occurrence; i++){
-                directions.remove("EAST");
-                directions.remove("WEST");
-            }
-        }
-        else{
-            for (int i = 1; i <= W_occurrence; i++){
-                directions.remove("EAST");
-                directions.remove("WEST");
-            }
-        }
         return directions;
     }
 
